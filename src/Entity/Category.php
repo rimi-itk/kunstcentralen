@@ -14,6 +14,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 
 /**
@@ -22,6 +23,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
  *     itemOperations={"GET"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
+ * @Gedmo\Loggable()
  */
 class Category
 {
@@ -36,6 +38,7 @@ class Category
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Gedmo\Versioned()
      */
     private $name;
 

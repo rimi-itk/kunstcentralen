@@ -14,6 +14,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -24,6 +25,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     itemOperations={"GET"}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\WorkOfArtRepository")
+ * @Gedmo\Loggable()
  * @Vich\Uploadable()
  */
 class WorkOfArt
@@ -39,11 +41,13 @@ class WorkOfArt
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Gedmo\Versioned()
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Gedmo\Versioned()
      */
     private $image;
 
