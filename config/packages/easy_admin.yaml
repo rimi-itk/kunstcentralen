@@ -1,0 +1,59 @@
+easy_admin:
+    entities:
+        WorkOfArt:
+            class: App\Entity\WorkOfArt
+
+            list:
+                fields:
+                    - property: name
+                    - property: image
+                      type: image
+                      base_path: '%app.path.works_of_art%'
+                    - property: artist
+                    - property: location
+                    - property: categories
+
+            form:
+                fields:
+                    - property: name
+                    - property: imageFile
+                      type: vich_image
+                    - property: artist
+                    - property: location
+                    - property: categories
+
+        Artist:
+            class: App\Entity\Artist
+
+            list:
+                fields:
+                    - property: name
+                    - property: works
+
+            form:
+                fields:
+                    - property: name
+
+        Location:
+            class: App\Entity\Location
+
+            list:
+                fields:
+                    - property: name
+                    - property: works
+
+            form:
+                fields:
+                    - property: name
+
+        Category:
+            class: App\Entity\Category
+
+            list:
+                fields:
+                    - property: name
+                    - property: works
+
+            form:
+                fields:
+                    - property: name
