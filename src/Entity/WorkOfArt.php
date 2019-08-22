@@ -10,6 +10,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,12 +19,21 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
  *     collectionOperations={"GET"},
  *     itemOperations={"GET"}
  * )
+ * @ApiFilter(SearchFilter::class, properties={
+ *     "name":"partial",
+ *     "artist.id": "exact",
+ *     "artist.name": "partial",
+ *     "location.id": "exact",
+ *     "location.name": "partial",
+ *     "categories.id": "exact"
+ * })
  * @ORM\Entity(repositoryClass="App\Repository\WorkOfArtRepository")
  * @Gedmo\Loggable()
  * @Vich\Uploadable()

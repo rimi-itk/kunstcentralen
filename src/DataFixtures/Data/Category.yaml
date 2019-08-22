@@ -1,0 +1,7 @@
+-
+    '@id': category:painting
+    name: Painting
+
+-
+    '@id': category:photograph
+    name: Photograph

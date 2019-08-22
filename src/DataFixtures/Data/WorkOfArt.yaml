@@ -1,0 +1,8 @@
+-
+    name: Krusedulle
+    image: krusedulle.jpg
+    artist: '@artist:jorn'
+    location: '@location:dokk1'
+    categories:
+        - '@category:painting'
+        - '@category:photograph'

@@ -18,6 +18,8 @@ easy_admin:
                     - property: name
                     - property: imageFile
                       type: vich_image
+                      type_options:
+                          allow_delete: false
                     - property: artist
                     - property: location
                     - property: categories
