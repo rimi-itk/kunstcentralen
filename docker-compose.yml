@@ -41,6 +41,11 @@ services:
     labels:
       - "traefik.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.docker.localhost"
 
+  yarn:
+    image: itkdev/yarn:latest
+    volumes:
+      - .:/app:delegated
+
   memcached:
     image: 'memcached:latest'
     ports:

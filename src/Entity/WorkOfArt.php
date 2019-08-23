@@ -18,13 +18,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
  *     collectionOperations={"GET"},
- *     itemOperations={"GET"}
+ *     itemOperations={"GET"},
+ *     normalizationContext={"groups"={"work_of_art_read"}},
  * )
  * @ApiFilter(SearchFilter::class, properties={
  *     "name":"partial",
@@ -32,9 +34,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     "artist.name": "partial",
  *     "location.id": "exact",
  *     "location.name": "partial",
- *     "categories.id": "exact"
+ *     "categories.id": "exact",
+ *     "query": "partial"
  * })
  * @ORM\Entity(repositoryClass="App\Repository\WorkOfArtRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @Gedmo\Loggable()
  * @Vich\Uploadable()
  */
@@ -43,21 +47,40 @@ class WorkOfArt
     use TimestampableEntity;
 
     /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Groups("work_of_art_read")
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @Groups("work_of_art_read")
+     */
+    protected $updatedAt;
+
+    /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("work_of_art_read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Gedmo\Versioned()
+     * @Groups("work_of_art_read")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Gedmo\Versioned()
+     * @Groups("work_of_art_read")
      */
     private $image;
 
@@ -70,18 +93,26 @@ class WorkOfArt
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Artist", inversedBy="works")
+     * @Groups("work_of_art_read")
      */
     private $artist;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Location", inversedBy="works")
+     * @Groups("work_of_art_read")
      */
     private $location;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="works")
+     * @Groups("work_of_art_read")
      */
     private $categories;
+
+    /**
+     * @ORM\Column(type="string", length=2040, nullable=true)
+     */
+    private $query;
 
     public function __construct()
     {
@@ -195,5 +226,27 @@ class WorkOfArt
     public function __toString()
     {
         return $this->name ?? self::class;
+    }
+
+    public function getQuery(): ?string
+    {
+        return $this->query;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateQuery()
+    {
+        $query[] = $this->name;
+        if (null !== $this->getArtist()) {
+            $query[] = $this->getArtist()->getName();
+        }
+        if (null !== $this->getLocation()) {
+            $query[] = $this->getLocation()->getName();
+        }
+
+        $this->query = implode(' ', $query);
     }
 }
