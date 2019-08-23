@@ -5,3 +5,8 @@ vich_uploader:
        works_of_art:
            uri_prefix: '%app.path.works_of_art%'
            upload_destination: '%kernel.project_dir%/public/%app.path.works_of_art%'
+           # We want unique file names (e.g. to prevent overwriting existing files).
+           namer:
+               service: Vich\UploaderBundle\Naming\OrignameNamer
+               options:
+                   - transliterate: true

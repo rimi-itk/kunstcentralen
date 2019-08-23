@@ -114,6 +114,12 @@ class WorkOfArt
      */
     private $query;
 
+    /**
+     * @ORM\Column(type="json")
+     * @Groups("work_of_art_read")
+     */
+    private $images = [];
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -248,5 +254,17 @@ class WorkOfArt
         }
 
         $this->query = implode(' ', $query);
+    }
+
+    public function getImages(): ?array
+    {
+        return $this->images;
+    }
+
+    public function setImages(array $images): self
+    {
+        $this->images = $images;
+
+        return $this;
     }
 }

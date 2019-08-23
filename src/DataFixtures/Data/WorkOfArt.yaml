@@ -1,6 +1,6 @@
 -
     name: Krusedulle
-    image: krusedulle.jpg
+    image: image-001.jpg
     artist: '@artist:jorn'
     location: '@location:dokk1'
     categories:
@@ -9,7 +9,7 @@
 
 -
     name: Mona Lisa
-    image: krusedulle.jpg
+    image: image-002.jpg
     artist: '@artist:leonardo'
     location: '@location:louvre'
     categories:

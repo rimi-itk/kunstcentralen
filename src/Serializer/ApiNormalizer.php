@@ -11,7 +11,7 @@
 namespace App\Serializer;
 
 use App\Entity\WorkOfArt;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Service\ImageGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -20,23 +20,20 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface, SerializerAwareInterface
 {
+    /** @var \Symfony\Component\Serializer\Normalizer\DenormalizerInterface|\Symfony\Component\Serializer\Normalizer\NormalizerInterface */
     private $decorated;
 
-    /** @var \Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface */
-    private $parameters;
+    /** @var \App\Service\ImageGenerator */
+    private $imageGenerator;
 
-    /** @var \Symfony\Component\Routing\Generator\UrlGeneratorInterface */
-    private $urlGenerator;
-
-    public function __construct(NormalizerInterface $decorated, ParameterBagInterface $parameters, UrlGeneratorInterface $urlGenerator)
+    public function __construct(NormalizerInterface $decorated, ImageGenerator $imageGenerator)
     {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
         }
 
         $this->decorated = $decorated;
-        $this->parameters = $parameters;
-        $this->urlGenerator = $urlGenerator;
+        $this->imageGenerator = $imageGenerator;
     }
 
     public function supportsNormalization($data, $format = null)
@@ -49,9 +46,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $data = $this->decorated->normalize($object, $format, $context);
 
         if ($object instanceof WorkOfArt) {
-            $basePath = $this->parameters->get('app.path.works_of_art');
-            $imagePath = $basePath.'/'.$data['image'];
-            $imageUrl = $this->getUrl($imagePath);
+            $imageUrl = $this->imageGenerator->getImageUrl($data['image'], $object, UrlGeneratorInterface::ABSOLUTE_URL);
             $data['image'] = $imageUrl;
         }
 
@@ -73,20 +68,5 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         if ($this->decorated instanceof SerializerAwareInterface) {
             $this->decorated->setSerializer($serializer);
         }
-    }
-
-    private function getUrl(string $path = '')
-    {
-        $context = $this->urlGenerator->getContext();
-        $scheme = $context->getScheme();
-        $host = $context->getHost();
-        $port = '';
-        if ('http' === $scheme && 80 !== $context->getHttpPort()) {
-            $port = ':'.$context->getHttpPort();
-        } elseif ('https' === $scheme && 443 !== $context->getHttpsPort()) {
-            $port = ':'.$context->getHttpsPort();
-        }
-
-        return $scheme.'://'.$host.$port.$context->getBaseUrl().$path;
     }
 }

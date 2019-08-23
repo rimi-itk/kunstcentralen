@@ -7,6 +7,11 @@ parameters:
     'env(DEFAULT_LOCALE)': da
     default_locale: '%env(DEFAULT_LOCALE)%'
     app.path.works_of_art: /uploads/images/works_of_art
+    router.request_context.scheme: '%env(REQUEST_CONTEXT_SCHEME)%'
+    router.request_context.host: '%env(REQUEST_CONTEXT_HOST)%'
+    router.request_context.base_url: '%env(REQUEST_CONTEXT_BASE_URL)%'
+    asset.request_context.base_path: '%router.request_context.base_url%'
+    asset.request_context.secure: '%env(bool:ASSET_REQUEST_CONTEXT_SECURE)%'
 
 services:
     # default configuration for services in *this* file
@@ -28,7 +33,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    'App\Serializer\ApiNormalizer':
+    App\Serializer\ApiNormalizer:
         decorates: 'api_platform.jsonld.normalizer.item'
         arguments:
             $decorated: '@App\Serializer\ApiNormalizer.inner'
+
+    App\EventListener\ImagesListener:
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    Liip\ImagineBundle\Imagine\Filter\FilterManager: '@liip_imagine.filter.manager'
+    Liip\ImagineBundle\Imagine\Data\DataManager: '@liip_imagine.data.manager'

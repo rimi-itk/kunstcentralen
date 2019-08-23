@@ -1,0 +1,47 @@
+# See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+liip_imagine:
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: "gd"
+
+    # configure resolvers
+    resolvers:
+
+        # setup the default resolver
+        default:
+
+            # use the default web path
+            web_path: ~
+
+    # your filter sets are defined here
+    filter_sets:
+
+        # # use the default cache configuration
+        # cache: ~
+
+        thumb:
+            filters:
+                downscale:
+                    max:
+                        - 128
+                        - 128
+
+        small:
+            filters:
+                downscale:
+                    max:
+                        - 480
+                        - 480
+
+        medium:
+            filters:
+                downscale:
+                    max:
+                        - 980
+                        - 980
+
+        large:
+            filters:
+                downscale:
+                    max:
+                        - 1690
+                        - 1690

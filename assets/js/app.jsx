@@ -37,7 +37,7 @@ class Item extends Component {
         return (
             <div className="item">
                 <div className="name">{value.name}</div>
-                <div className="image"><img src={value.image}/></div>
+                <div className="image"><img src={value.images.thumb}/></div>
                 <div className="artist-name">{value.artist.name}</div>
                 <div className="location-name">{value.location.name}</div>
             </div>
